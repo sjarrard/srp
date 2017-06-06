@@ -3,11 +3,6 @@ import subprocess
 import json
 cellNumberRe = re.compile(r"^Cell\s+(?P<cellnumber>.+)\s+-\s+Address:\s(?P<mac>.+)$")
 regexps = [
-   # re.compile(r"^ESSID:\"(?P<essid>.+)\"$"),
-   # re.compile(r"^Protocol:(?P<protocol>.+)$"),
-   # re.compile(r"^Mode:(?P<mode>.+)$"),
-   # re.compile(r"^Frequency:(?P<frequency>[\d.]+) (?P<frequency_units>.+) \(Channel (?P<channel>\d+)\)$"),
-   # re.compile(r"^Encryption key:(?P<encryption>.+)$"),
     re.compile(r"^Quality=(?P<signal_level>\d+)/(?P<signal_total>\d+)\s+Signal level=(?P<db>.+) d.+$"),
     re.compile(r"^Signal level=(?P<signal_level>\d+)/(?P<signal_total>\d+).*$"),
 ]
