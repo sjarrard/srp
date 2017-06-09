@@ -6,6 +6,7 @@ regexps = [
     re.compile(r"^Quality=(?P<signal_level>\d+)/(?P<signal_total>\d+)\s+Signal level=(?P<db>.+) d.+$"),
     re.compile(r"^Signal level=(?P<signal_level>\d+)/(?P<signal_total>\d+).*$"),
 ]
+numCycles = 5
 
 # Runs the comnmand to scan the list of networks.
 # Must run as super user.
@@ -15,6 +16,7 @@ def scan(interface='wlan0'):
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     points = proc.stdout.read().decode('utf-8')
     return points
+
 
 # Parses the response from the command "iwlist scan"
 def parse(content):
@@ -33,22 +35,38 @@ def parse(content):
                 continue
     return cells
 
-# Run a new iwlist scan
-newScan = scan()
-newCells = parse(newScan)
 
-# Create a new dictionary  based on mac addresses.
+# Create a new dictionary based on mac addresses.
 # Each unique address references a signal level.
-addressDict = {}
-for line in newCells:
-    if line['mac'] not in addressDict.keys():
-        addressDict[line['mac']] = [line['signal_level'], line['db']]
+# For redudancy/future proofing, signal level is list of signal and db
+def createDict(cells):
+    addressDict = {}
+    for line in cells:
+        if line['mac'] not in addressDict.keys():
+            addressDict[line['mac']] = [line['signal_level'], line['db']]
+    return addressDict
 
-#print(addressDict)
 
+# Run iwlist 5 times to get a baseline average for a new node
+def runCycle():
+    fullCycleList = []
+    for i in range(numCycles):
+        newScan = scan()
+        newCells = parse(newScan)
+        fullCycleList.append(createDict(newCells))
+    return fullCycleList
+
+#newScan = scan()
+#ewNode = parse(newScan)
+
+
+
+
+newNode = runCycle()
+#print(type(newNode))
 
 with open('test.json', 'w') as f:
-    json.dump(addressDict, f)
+    json.dump(newNode, f)
 
 #for line in newCells:
 #    print(line['mac'])
