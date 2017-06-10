@@ -43,27 +43,40 @@ def createDict(cells):
     addressDict = {}
     for line in cells:
         if line['mac'] not in addressDict.keys():
-            addressDict[line['mac']] = [line['signal_level'], line['db']]
+            addressDict[line['mac']] = {'signal_level': [line['signal_level']], 'db':[line['db']]}
     return addressDict
 
 
+# Mesh the new dictionary with the composite dictionary
+def mergeDict(fullCycleDict, newDict):
+    for i in newDict:
+        if i not in fullCycleDict.keys():
+            fullCycleDict[i] = newDict[i]
+        else:
+            fullCycleDict[i]['signal_level'].append(newDict[i]['signal_level'][0])
+            fullCycleDict[i]['db'].append(newDict[i]['db'][0])
+    return fullCycleDict
+
+
 # Run iwlist 5 times to get a baseline average for a new node
+# Each 
 def runCycle():
-    fullCycleList = []
+    fullCycleDict = {}
     for i in range(numCycles):
         newScan = scan()
         newCells = parse(newScan)
-        fullCycleList.append(createDict(newCells))
-    return fullCycleList
+        newDict = createDict(newCells)
+        if fullCycleDict =={}:
+            fullCycleDict = newDict
+        else:
+            fullCycleDict = mergeDict(fullCycleDict, newDict)
+        #.append(createDict(newCells))
+    return fullCycleDict
 
 #newScan = scan()
 #ewNode = parse(newScan)
 
-
-
-
 newNode = runCycle()
-#print(type(newNode))
 
 with open('test.json', 'w') as f:
     json.dump(newNode, f)
