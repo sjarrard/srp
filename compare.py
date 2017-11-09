@@ -10,12 +10,14 @@ def compareToMaster(masterList, newNode, allTiles):
             compareDict[mac][tile] = {}
             #compareDict[mac][tile]['totalVariance'] = 0
             if mac in newNode.keys():
-                compareDict[mac][tile]['scan'] = abs(int(newNode[mac]['db'][0]))
+                compareDict[mac][tile]['scan'] = abs(int(newNode[mac]['signal_level'][0]))
+               # if compareDict[mac][tile]['scan'] < 30:
+                   # compareDict[mac][tile]['scan'] = 0                   
             else: 
                 compareDict[mac][tile]['scan']= 0
                 
             if tile in masterList[mac].keys():
-                compareDict[mac][tile]['saved'] = abs(masterList[mac][tile]['averageDB'])
+                compareDict[mac][tile]['saved'] = abs(masterList[mac][tile]['averageSig'])
             else:
                 compareDict[mac][tile]['saved'] = 0
             
@@ -60,13 +62,13 @@ for key in savedData:
         if tile not in tileList:
             tileList.append(tile)
 #print(tileList)
-with open('2-1',encoding="utf-8") as f:
+with open('14-12',encoding="utf-8") as f:
     data = eval(f.read())
     node = data
     
 compared = compareToMaster(savedData, node, tileList)
 for key in compared:
-    print(compared[key]['1-1'])
+    print(compared[key]['13-12'])
 
 summed = calculateLikelyTiles(compared)
 five = getBestFive(summed)

@@ -4,9 +4,14 @@ import json
 
 def getAverage(newList):
     sum = 0
+    l = len(newList)
+    if l == 0:
+        return 0
     for i in newList:
         sum += int(i)
-    return sum/len(newList)
+        if i == 0:
+            l-=1
+    return sum/l
 
 
 def compareToMaster(masterList, newNode, allTiles):
@@ -18,12 +23,14 @@ def compareToMaster(masterList, newNode, allTiles):
             #compareDict[mac][tile]['totalVariance'] = 0
             if mac in newNode.keys():
                 
-                compareDict[mac][tile]['scan'] = abs(getAverage(newNode[mac]['db']))
+                compareDict[mac][tile]['scan'] = getAverage(newNode[mac]['signal_level'])
+                if compareDict[mac][tile]['scan'] < 25:
+                    compareDict[mac][tile]['scan'] = 0            
             else: 
                 compareDict[mac][tile]['scan']= 0
                 
             if tile in masterList[mac].keys():
-                compareDict[mac][tile]['saved'] = abs(masterList[mac][tile]['averageDB'])
+                compareDict[mac][tile]['saved'] = masterList[mac][tile]['averageSig']
             else:
                 compareDict[mac][tile]['saved'] = 0
             
@@ -44,7 +51,7 @@ def calculateLikelyTiles(compareDict):
 
 def getBestFive(newDict):
     bestFive = []
-    for i in range(5):
+    for i in range(7):
         min = 9999999.0
         minTile = ''
         for tile in newDict:
@@ -82,6 +89,7 @@ for tile in roomGrid:
     summed = calculateLikelyTiles(compared)
     five = getBestFive(summed)
     print(tile, five)
+    break
 #for key in compared:
     #print(compared[key]['1-1']['variance'])
 

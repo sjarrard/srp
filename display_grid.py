@@ -27,27 +27,26 @@ for tile in roomGrid:
                     
         macList[mac][tile]['averageDB'] = averageList(macList[mac][tile]['db'])
         macList[mac][tile]['averageSig'] = averageList(macList[mac][tile]['signal_level'])
-        if macList[mac][tile]['averageSig'] < 25:
-            macList[mac][tile]['averageSig'] = 0
 
+splitArray = []        
+for key in macList:
+    newGrid = [[0 for x in range(19)] for y in range(27)] 
 
-#splitArray = []        
-#for key in macList:
-    #newGrid = [[0 for x in range(19)] for y in range(34)] 
+    for tile in macList[key]:
+        row,col = tile.split('-')
+        row = int(row)
+        col = int(col)
+        newGrid[row][col] = int(macList[key][tile]['db'][0])
+    splitArray.append(newGrid)
 
-    #for tile in macList[key]:
-        #row,col = tile.split('-')
-        #print(row)
-        #if(row.find('H') != -1):
-            #H, row = row.split('H')
-        #print(row)
-        #row = int(row)
-        #col = int(col)
-        #newGrid[row][col] = macList[key][tile]['db'][0]
-    #splitArray.append(newGrid)
-
-#for col in splitArray[2]:
-    #print(col)
+for mac in splitArray:
+    #print(mac)
+    for row in mac:
+        print("[", end ="")
+        for col in row:
+            print("{0:3d}".format(col), end=" ")
+        print("]")
+    print("\n")
 
 path = '/home/sean/srp/outputMacList'
 with open(path, 'w', encoding="utf-8") as f:
